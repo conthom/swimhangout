@@ -62,13 +62,15 @@ function useSmileyColorSync(groupRef, color, animate = true) {
 
   const { camera } = useThree();
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     if (!groupRef.current) return;
 
-    displayColor.current.lerp(targetColor.current, Math.min(1, delta * 2.5));
+    const dt = delta > 0 ? delta : state.clock.getDelta() || 1 / 60;
+
+    displayColor.current.lerp(targetColor.current, Math.min(1, dt * 2.5));
 
     if (animate) {
-      groupRef.current.rotation.y += delta * 0.85;
+      groupRef.current.rotation.y += dt * 0.85;
       groupRef.current.rotation.x =
         Math.sin(groupRef.current.rotation.y * 0.5) * 0.12;
     }
@@ -88,8 +90,19 @@ function useSmileyColorSync(groupRef, color, animate = true) {
     backNormal.current.set(0, 0, -1);
     backNormal.current.applyQuaternion(groupRef.current.quaternion);
 
-    const frontFacing = frontNormal.current.dot(toCamera.current) > 0.08;
-    const backFacing = backNormal.current.dot(toCamera.current) > 0.08;
+    let frontFacing = frontNormal.current.dot(toCamera.current) > 0.08;
+    let backFacing = backNormal.current.dot(toCamera.current) > 0.08;
+
+    if (!frontFacing && !backFacing) {
+      if (
+        frontNormal.current.dot(toCamera.current) >=
+        backNormal.current.dot(toCamera.current)
+      ) {
+        frontFacing = true;
+      } else {
+        backFacing = true;
+      }
+    }
 
     if (frontFaceRef.current) {
       frontFaceRef.current.visible = frontFacing;
@@ -153,16 +166,42 @@ function StaticSmiley({ color }) {
   );
 }
 
+function subscribeReducedMotion(mq, onChange) {
+  if (typeof mq.addEventListener === 'function') {
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }
+  mq.addListener(onChange);
+  return () => mq.removeListener(onChange);
+}
+
+function getMobileGlConfig() {
+  const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  return {
+    alpha: true,
+    antialias: !coarsePointer,
+    powerPreference: 'high-performance',
+  };
+}
+
 export function SmileyFace3D() {
   const { color } = useThemeAccent();
+  const [mounted, setMounted] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [glConfig, setGlConfig] = useState({
+    alpha: true,
+    antialias: true,
+    powerPreference: 'high-performance',
+  });
 
   useEffect(() => {
+    setMounted(true);
+    setGlConfig(getMobileGlConfig());
+
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
     const update = () => setReducedMotion(mq.matches);
     update();
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
+    return subscribeReducedMotion(mq, update);
   }, []);
 
   return (
@@ -170,18 +209,22 @@ export function SmileyFace3D() {
       className="relative w-full h-[200px] sm:h-[260px] md:h-[280px] pointer-events-none select-none"
       aria-hidden="true"
     >
-      <Canvas
-        camera={{ position: [0, 0, 3.6], fov: 42 }}
-        dpr={[1, 2]}
-        gl={{ alpha: true, antialias: true }}
-        style={{ background: 'transparent' }}
-      >
-        {reducedMotion ? (
-          <StaticSmiley color={color} />
-        ) : (
-          <SmileyScene color={color} />
-        )}
-      </Canvas>
+      {mounted ? (
+        <Canvas
+          frameloop="always"
+          camera={{ position: [0, 0, 3.6], fov: 42 }}
+          dpr={[1, Math.min(window.devicePixelRatio || 1, 2)]}
+          gl={glConfig}
+          resize={{ scroll: false, debounce: 0 }}
+          style={{ background: 'transparent', width: '100%', height: '100%' }}
+        >
+          {reducedMotion ? (
+            <StaticSmiley color={color} />
+          ) : (
+            <SmileyScene color={color} />
+          )}
+        </Canvas>
+      ) : null}
     </div>
   );
 }
