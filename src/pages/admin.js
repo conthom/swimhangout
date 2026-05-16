@@ -1,13 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { CHAT_ADMIN_SECRET } from '../lib/chatAdmin';
 import { getSupabase } from '../lib/supabase';
 
 export default function AdminPage() {
   const [invites, setInvites] = useState([]);
   const [chatMessages, setChatMessages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [adminSecret, setAdminSecret] = useState('');
   const [chatActionId, setChatActionId] = useState(null);
   const [chatError, setChatError] = useState(null);
 
@@ -31,6 +31,7 @@ export default function AdminPage() {
     const rows = payload.messages || [];
     setChatMessages([...rows].reverse());
   }, []);
+
   useEffect(() => {
     async function load() {
       try {
@@ -51,19 +52,6 @@ export default function AdminPage() {
     }
     load();
   }, [fetchInvites, fetchChat]);
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const saved = sessionStorage.getItem('party_admin_chat_secret');
-    if (saved) setAdminSecret(saved);
-  }, []);
-
-  const persistSecret = (value) => {
-    setAdminSecret(value);
-    if (typeof window !== 'undefined') {
-      if (value) sessionStorage.setItem('party_admin_chat_secret', value);
-      else sessionStorage.removeItem('party_admin_chat_secret');
-    }
-  };
 
   async function deleteChatMessage(id) {
     setChatError(null);
@@ -72,7 +60,7 @@ export default function AdminPage() {
       const res = await fetch('/api/chat/delete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, secret: adminSecret }),
+        body: JSON.stringify({ id, secret: CHAT_ADMIN_SECRET }),
       });
       const payload = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -148,27 +136,6 @@ export default function AdminPage() {
 
         <section>
           <h2 className="text-white text-xl mb-4">Group chat</h2>
-          <p className="text-gray-400 text-sm mb-3 max-w-xl">
-            Set the same secret as{' '}
-            <code className="text-gray-300">CHAT_ADMIN_SECRET</code> in your server env (not exposed to
-            the public site). It is stored in this browser session only.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center mb-4">
-            <input
-              type="password"
-              value={adminSecret}
-              onChange={(e) => persistSecret(e.target.value)}
-              placeholder="Admin secret"
-              className="flex-1 max-w-md rounded-lg px-4 py-2 bg-gray-900 text-white border border-gray-700"
-            />
-            <button
-              type="button"
-              onClick={() => persistSecret('')}
-              className="text-sm text-gray-400 hover:text-white underline sm:no-underline"
-            >
-              Clear saved secret
-            </button>
-          </div>
           {chatError && (
             <div className="mb-4 text-sm text-sky-300 bg-sky-950/50 border border-sky-900 rounded-lg px-4 py-2">
               {chatError}
@@ -198,7 +165,7 @@ export default function AdminPage() {
                       <td className="px-4 py-3">
                         <button
                           type="button"
-                          disabled={!adminSecret || chatActionId === row.id}
+                          disabled={chatActionId === row.id}
                           onClick={() => deleteChatMessage(row.id)}
                           className="text-sky-400 hover:text-sky-300 text-xs disabled:opacity-40"
                         >

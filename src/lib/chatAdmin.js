@@ -1,0 +1,1 @@
+export const CHAT_ADMIN_SECRET = 'CINNAMON';

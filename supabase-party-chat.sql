@@ -49,6 +49,10 @@ create policy "party_chat_insert_all"
   to anon, authenticated
   with check (true);
 
--- Deletes go through /api/chat/delete using SUPABASE_SERVICE_ROLE_KEY (bypasses RLS).
+drop policy if exists "party_chat_delete_all" on public.party_chat;
+create policy "party_chat_delete_all"
+  on public.party_chat for delete
+  to anon, authenticated
+  using (true);
 
 -- If you already created party_chat but not party_invites, you can run only the party_invites block above.
