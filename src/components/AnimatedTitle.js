@@ -35,7 +35,17 @@ export function AnimatedTitle() {
       >
         <p className="mb-4 font-semibold opacity-90">Hangout</p>
         <p className="mb-2">When: Friday May 22 @ 8 PM</p>
-        <p className="mb-6">Where: 5328 Bundle Flower Court</p>
+        <p className="mb-6">
+          Where:{' '}
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=5328+Bundle+Flower+Court"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:opacity-80 transition-opacity"
+          >
+            5328 Bundle Flower Court
+          </a>
+        </p>
         <p className="mb-4 font-semibold opacity-90">Swim</p>
         <p className="mb-2">When: Wednesday May 27, 7 PM – 10 PM</p>
         <p className="mb-2">Where: 4204 Clearwater Ln, Naperville</p>
