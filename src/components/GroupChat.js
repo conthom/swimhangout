@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 const NAME_KEY = 'party_group_chat_display_name';
 const POLL_MS = 2500;
-const IDLE_SCROLL_MS = 10_000;
 
 function formatTime(iso) {
   const d = new Date(iso);
@@ -27,38 +26,6 @@ export function GroupChat() {
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
   const [loadError, setLoadError] = useState(null);
-  const bottomRef = useRef(null);
-  const messagesContainerRef = useRef(null);
-  const lastInteractionRef = useRef(0);
-  const scrollTimeoutRef = useRef(null);
-
-  const scrollToBottom = () => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const markInteraction = useCallback(() => {
-    lastInteractionRef.current = Date.now();
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
-      scrollTimeoutRef.current = null;
-    }
-  }, []);
-
-  const scheduleScrollWhenIdle = useCallback(() => {
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
-    }
-
-    const elapsed = Date.now() - lastInteractionRef.current;
-    const delay = Math.max(0, IDLE_SCROLL_MS - elapsed);
-
-    scrollTimeoutRef.current = setTimeout(() => {
-      scrollTimeoutRef.current = null;
-      if (Date.now() - lastInteractionRef.current >= IDLE_SCROLL_MS) {
-        scrollToBottom();
-      }
-    }, delay);
-  }, []);
 
   const refreshMessages = useCallback(async () => {
     try {
@@ -75,17 +42,6 @@ export function GroupChat() {
     const saved = window.localStorage.getItem(NAME_KEY);
     if (saved?.trim()) setDisplayName(saved.trim());
   }, []);
-
-  useEffect(() => {
-    if (!displayName) return;
-    scheduleScrollWhenIdle();
-    return () => {
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-        scrollTimeoutRef.current = null;
-      }
-    };
-  }, [messages, displayName, scheduleScrollWhenIdle]);
 
   useEffect(() => {
     if (!displayName) return;
@@ -181,14 +137,7 @@ export function GroupChat() {
           {loadError}
         </div>
       )}
-      <div
-        ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto px-3 py-4 space-y-2 bg-[#000000] min-h-[200px]"
-        onScroll={markInteraction}
-        onWheel={markInteraction}
-        onTouchStart={markInteraction}
-        onPointerDown={markInteraction}
-      >
+      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-2 bg-[#000000] min-h-[200px]">
         {messages.length === 0 && !loadError && (
           <p className="text-center text-gray-500 text-sm py-8">No messages yet. Say hi.</p>
         )}
@@ -224,7 +173,6 @@ export function GroupChat() {
             </div>
           );
         })}
-        <div ref={bottomRef} />
       </div>
       <form
         onSubmit={sendMessage}
@@ -233,11 +181,7 @@ export function GroupChat() {
         <input
           type="text"
           value={draft}
-          onChange={(e) => {
-            markInteraction();
-            setDraft(e.target.value);
-          }}
-          onFocus={markInteraction}
+          onChange={(e) => setDraft(e.target.value)}
           placeholder="Message"
           className="flex-1 rounded-full px-4 py-2.5 bg-[#2c2c2e] text-white border border-gray-700 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#0a84ff]"
           maxLength={2000}
