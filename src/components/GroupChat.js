@@ -133,19 +133,15 @@ export function GroupChat() {
               className={`flex w-full ${mine ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[80%] sm:max-w-[75%] rounded-[1.25rem] px-4 py-2 ${
-                  mine
-                    ? 'accent-bg text-white rounded-br-md'
-                    : 'bg-[#3a3a3c] text-white rounded-bl-md'
+                className={`max-w-[80%] sm:max-w-[75%] rounded-[1.25rem] px-4 py-2 accent-bg text-white ${
+                  mine ? 'rounded-br-md' : 'rounded-bl-md'
                 }`}
               >
                 {!mine && (
-                  <p className="text-xs text-gray-300 font-medium mb-1">{m.author_name}</p>
+                  <p className="text-xs text-white/80 font-medium mb-1">{m.author_name}</p>
                 )}
                 <p className="text-[15px] leading-snug whitespace-pre-wrap break-words">{m.body}</p>
-                <p
-                  className={`text-[10px] mt-1 ${mine ? 'text-white/70' : 'text-gray-400'} text-right`}
-                >
+                <p className="text-[10px] mt-1 text-white/70 text-right">
                   {formatTime(m.created_at)}
                 </p>
               </div>
