@@ -1,6 +1,9 @@
 'use client';
 
-export function AnimatedTitle({ color }) {
+import { useThemeAccent } from '../context/AccentColorContext';
+
+export function AnimatedTitle() {
+  const { color } = useThemeAccent();
 
   return (
     <div className="flex flex-col items-center space-y-6 sm:space-y-8 text-center">
@@ -8,7 +11,7 @@ export function AnimatedTitle({ color }) {
         className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-wider transition-colors duration-1000 px-4 w-full"
         style={{
           fontFamily: 'Akira Expanded, sans-serif',
-          color: color,
+          color,
         }}
       >
         lets hangout and swim
@@ -17,7 +20,7 @@ export function AnimatedTitle({ color }) {
         className="text-base sm:text-lg md:text-xl tracking-wider transition-colors duration-1000 px-4 w-full"
         style={{
           fontFamily: 'Akira Expanded, sans-serif',
-          color: color,
+          color,
         }}
       >
         <p className="mb-4 font-semibold opacity-90">Hangout</p>

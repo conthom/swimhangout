@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import React from 'react';
 import { getSupabase } from '../lib/supabase';
-
 export function PartyForm() {
   const [formData, setFormData] = useState({
     name: '',
@@ -79,7 +78,7 @@ export function PartyForm() {
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl bg-gray-900 text-white border border-gray-700 
-                   focus:ring-2 focus:ring-sky-500/50 focus:border-transparent 
+                   accent-focus focus:border-transparent 
                    placeholder-gray-400 transition-all duration-200 text-sm sm:text-base"
           placeholder="Your name"
         />
@@ -96,7 +95,7 @@ export function PartyForm() {
                 setFormData({ ...formData, attending_hangout: e.target.checked });
                 setStatus('idle');
               }}
-              className="h-4 w-4 rounded border-gray-600 text-blue-600 focus:ring-sky-500/50"
+              className="h-4 w-4 rounded border-gray-600 accent-check"
             />
             <span>Hangout (May 22 @ 8 PM)</span>
           </label>
@@ -108,7 +107,7 @@ export function PartyForm() {
                 setFormData({ ...formData, attending_swim: e.target.checked });
                 setStatus('idle');
               }}
-              className="h-4 w-4 rounded border-gray-600 text-blue-600 focus:ring-sky-500/50"
+              className="h-4 w-4 rounded border-gray-600 accent-check"
             />
             <span>Swim (May 27, 7–10 PM)</span>
           </label>
@@ -127,8 +126,7 @@ export function PartyForm() {
             max="10"
             value={formData.guests}
             onChange={(e) => setFormData({ ...formData, guests: parseInt(e.target.value) })}
-            className="w-full h-2 bg-gray-700/50 rounded-lg appearance-none cursor-pointer 
-                     accent-blue-600 hover:accent-sky-500 transition-colors duration-200"
+            className="w-full h-2 bg-gray-700/50 rounded-lg appearance-none cursor-pointer accent-range"
           />
           <span className="text-white font-medium min-w-[2rem] text-center text-base sm:text-lg">
             {formData.guests}
@@ -143,7 +141,7 @@ export function PartyForm() {
           value={formData.message}
           onChange={(e) => setFormData({ ...formData, message: e.target.value })}
           className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl bg-gray-900 text-white border border-gray-700 
-                   focus:ring-2 focus:ring-sky-500/50 focus:border-transparent 
+                   accent-focus focus:border-transparent 
                    placeholder-gray-400 transition-all duration-200 h-32 resize-none text-sm sm:text-base"
           placeholder="Any additional information..."
         />
@@ -152,8 +150,8 @@ export function PartyForm() {
       <button
         type="submit"
         disabled={status === 'loading'}
-        className="w-full py-2 sm:py-3 px-4 sm:px-6 rounded-xl bg-blue-600 hover:bg-sky-500 
-                 text-white font-medium text-base sm:text-lg transition-colors duration-200
+        className="w-full py-2 sm:py-3 px-4 sm:px-6 rounded-xl accent-bg
+                 text-white font-medium text-base sm:text-lg
                  disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {status === 'loading' ? 'Submitting...' : 'Submit RSVP'}

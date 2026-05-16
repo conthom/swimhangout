@@ -31,8 +31,8 @@ export function ScrollToChatButton({ targetRef }) {
       aria-label="Scroll down to chat"
       className="fixed z-50 bottom-6 right-6 md:left-1/2 md:right-auto md:-translate-x-1/2
                  flex items-center gap-2 rounded-full px-4 py-3
-                 bg-[#0a84ff] hover:bg-[#409cff] text-white text-sm font-semibold
-                 shadow-lg shadow-blue-900/40 transition-colors
+                 accent-bg text-white text-sm font-semibold
+                 shadow-lg shadow-black/40
                  md:px-5 md:py-3.5"
       style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif' }}
     >

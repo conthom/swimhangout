@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Edges } from '@react-three/drei';
 import * as THREE from 'three';
+import { useThemeAccent } from '../context/AccentColorContext';
 
 const FACE_Z = 0.21;
 
@@ -152,7 +153,8 @@ function StaticSmiley({ color }) {
   );
 }
 
-export function SmileyFace3D({ color }) {
+export function SmileyFace3D() {
+  const { color } = useThemeAccent();
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {

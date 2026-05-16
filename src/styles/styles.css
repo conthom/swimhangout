@@ -42,3 +42,28 @@ input, textarea, select {
 .bg-wrapper {
   @apply min-h-screen w-full bg-black overflow-hidden relative;
 }
+
+.accent-bg {
+  background-color: var(--accent);
+  transition: background-color 1000ms ease;
+}
+
+.accent-bg:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.accent-focus:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent);
+  transition: box-shadow 1000ms ease;
+}
+
+.accent-range {
+  accent-color: var(--accent);
+  transition: accent-color 1000ms ease;
+}
+
+.accent-check {
+  accent-color: var(--accent);
+  transition: accent-color 1000ms ease;
+}

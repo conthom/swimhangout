@@ -108,13 +108,13 @@ export function GroupChat() {
             value={nameInput}
             onChange={(e) => setNameInput(e.target.value)}
             placeholder="Your name"
-            className="w-full rounded-full px-4 py-3 bg-[#2c2c2e] text-white border border-gray-600 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#0a84ff]"
+            className="w-full rounded-full px-4 py-3 bg-[#2c2c2e] text-white border border-gray-600 placeholder-gray-500 focus:outline-none accent-focus"
             maxLength={40}
             autoComplete="nickname"
           />
           <button
             type="submit"
-            className="rounded-full py-3 bg-[#0a84ff] text-white font-semibold hover:bg-[#409cff] transition-colors"
+            className="rounded-full py-3 accent-bg text-white font-semibold"
           >
             Continue
           </button>
@@ -156,7 +156,7 @@ export function GroupChat() {
               <div
                 className={`max-w-[80%] sm:max-w-[75%] rounded-[1.25rem] px-4 py-2 ${
                   mine
-                    ? 'bg-[#0a84ff] text-white rounded-br-md'
+                    ? 'accent-bg text-white rounded-br-md'
                     : 'bg-[#3a3a3c] text-white rounded-bl-md'
                 }`}
               >
@@ -165,7 +165,7 @@ export function GroupChat() {
                 )}
                 <p className="text-[15px] leading-snug whitespace-pre-wrap break-words">{m.body}</p>
                 <p
-                  className={`text-[10px] mt-1 ${mine ? 'text-blue-100/90' : 'text-gray-400'} text-right`}
+                  className={`text-[10px] mt-1 ${mine ? 'text-white/70' : 'text-gray-400'} text-right`}
                 >
                   {formatTime(m.created_at)}
                 </p>
@@ -183,13 +183,13 @@ export function GroupChat() {
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder="Message"
-          className="flex-1 rounded-full px-4 py-2.5 bg-[#2c2c2e] text-white border border-gray-700 placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#0a84ff]"
+          className="flex-1 rounded-full px-4 py-2.5 bg-[#2c2c2e] text-white border border-gray-700 placeholder-gray-500 text-sm focus:outline-none accent-focus"
           maxLength={2000}
         />
         <button
           type="submit"
           disabled={sending || !draft.trim()}
-          className="rounded-full px-5 py-2.5 bg-[#0a84ff] text-white text-sm font-semibold disabled:opacity-40"
+          className="rounded-full px-5 py-2.5 accent-bg text-white text-sm font-semibold disabled:opacity-40"
         >
           Send
         </button>
