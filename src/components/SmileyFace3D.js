@@ -3,31 +3,16 @@
 import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Edges } from '@react-three/drei';
+import * as THREE from 'three';
 import { useThemeAccent } from '../context/AccentColorContext';
 
-const FACE_Z = 0.21;
+const EYE_RADIUS = 0.09;
+const EYE_THICKNESS = 0.001;
+const MOUTH_RADIUS = 0.36;
+const MOUTH_TUBE = 0.065;
 
-function SmileyFaceSide({ zSign, color }) {
-  const z = FACE_Z * zSign;
-  const mouthRotation =
-    zSign > 0 ? [0, 0, Math.PI] : [0, Math.PI, Math.PI];
-
-  return (
-    <>
-      <mesh position={[-0.3, 0.22, z]}>
-        <sphereGeometry args={[0.11, 20, 20]} />
-        <meshStandardMaterial color={color} />
-      </mesh>
-      <mesh position={[0.3, 0.22, z]}>
-        <sphereGeometry args={[0.11, 20, 20]} />
-        <meshStandardMaterial color={color} />
-      </mesh>
-      <mesh position={[0, -0.1, z]} rotation={mouthRotation}>
-        <torusGeometry args={[0.36, 0.065, 12, 32, Math.PI]} />
-        <meshStandardMaterial color={color} />
-      </mesh>
-    </>
-  );
+function FeatureMaterial({ color }) {
+  return <meshBasicMaterial color={color} toneMapped={false} side={THREE.DoubleSide} />;
 }
 
 function SmileyModel({ color }) {
@@ -43,13 +28,32 @@ function SmileyModel({ color }) {
 
   return (
     <group ref={groupRef}>
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[1, 1, 0.4, 64]} />
+      <mesh>
+        <circleGeometry args={[1, 64]} />
         <meshStandardMaterial transparent opacity={0} />
-        <Edges scale={1.001} color={color} threshold={12} />
+        <Edges color={color} threshold={12} />
       </mesh>
-      <SmileyFaceSide zSign={1} color={color} />
-      <SmileyFaceSide zSign={-1} color={color} />
+      <mesh position={[-0.3, 0.22, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[EYE_RADIUS, EYE_RADIUS, EYE_THICKNESS, 16]} />
+        <FeatureMaterial color={color} />
+      </mesh>
+      <mesh position={[0.3, 0.22, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[EYE_RADIUS, EYE_RADIUS, EYE_THICKNESS, 16]} />
+        <FeatureMaterial color={color} />
+      </mesh>
+      <mesh position={[0, -0.1, 0]}>
+        <ringGeometry
+          args={[
+            MOUTH_RADIUS - MOUTH_TUBE,
+            MOUTH_RADIUS + MOUTH_TUBE,
+            32,
+            1,
+            Math.PI,
+            Math.PI,
+          ]}
+        />
+        <FeatureMaterial color={color} />
+      </mesh>
     </group>
   );
 }
