@@ -17,10 +17,26 @@ export default async function handler(req, res) {
 
   try {
     const supabase = createSupabaseServerClient();
-    const { error } = await supabase.from('party_chat').delete().eq('id', id);
+    const { data: deleted, error } = await supabase.rpc('delete_party_chat_message', {
+      msg_id: id,
+      admin_key: secret,
+    });
+
     if (error) {
+      const msg = error.message || '';
+      if (msg.includes('delete_party_chat_message') && msg.includes('does not exist')) {
+        return res.status(500).json({
+          error:
+            'Delete function missing. Run supabase-party-chat-delete.sql in the Supabase SQL editor.',
+        });
+      }
       return res.status(500).json({ error: error.message });
     }
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
     return res.status(200).json({ ok: true });
   } catch (err) {
     return res.status(500).json({ error: err.message || 'Delete failed' });

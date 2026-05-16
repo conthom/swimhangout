@@ -49,10 +49,25 @@ create policy "party_chat_insert_all"
   to anon, authenticated
   with check (true);
 
-drop policy if exists "party_chat_delete_all" on public.party_chat;
-create policy "party_chat_delete_all"
-  on public.party_chat for delete
-  to anon, authenticated
-  using (true);
+-- Admin deletes use delete_party_chat_message() (see supabase-party-chat-delete.sql).
+
+create or replace function public.delete_party_chat_message(msg_id uuid, admin_key text)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if admin_key is distinct from 'CINNAMON' then
+    raise exception 'Invalid admin secret';
+  end if;
+
+  delete from public.party_chat where id = msg_id;
+  return found;
+end;
+$$;
+
+revoke all on function public.delete_party_chat_message(uuid, text) from public;
+grant execute on function public.delete_party_chat_message(uuid, text) to anon, authenticated;
 
 -- If you already created party_chat but not party_invites, you can run only the party_invites block above.
