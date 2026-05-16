@@ -1,19 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-export function AnimatedTitle() {
-  const [usePrimaryBlue, setUsePrimaryBlue] = useState(true);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setUsePrimaryBlue((prev) => !prev);
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const color = usePrimaryBlue ? '#1d4ed8' : '#7dd3fc';
+export function AnimatedTitle({ color }) {
 
   return (
     <div className="flex flex-col items-center space-y-6 sm:space-y-8 text-center">
